@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>3-in-1 Game Hub</title>
+<style>
+body{
+  text-align:center;
+  font-family:Arial;
+  background:#111;
+  color:white;
+}
+button{
+  padding:10px 20px;
+  margin:10px;
+  font-size:16px;
+  cursor:pointer;
+  border:none;
+  border-radius:8px;
+}
+canvas{
+  background:#222;
+  display:none;
+  margin:auto;
+  border:2px solid white;
+}
+#guessGame{ display:none; }
+.controlBtn{
+  background:#00ffcc;
+  color:black;
+}
+.menuBtn{
+  background:#ffcc00;
+}
+</style>
+</head>
+<body>
+
+<h1>🔥 3-IN-1 GAME HUB 🔥</h1>
+
+<button class="menuBtn" onclick="showGame('dino')">Dino Game</button>
+<button class="menuBtn" onclick="showGame('guess')">Guess Number</button>
+<button class="menuBtn" onclick="showGame('flappy')">Flappy Game</button>
+
+<br><br>
+
+<!-- DINO -->
+<canvas id="dinoCanvas" width="500" height="200"></canvas>
+<br>
+<button id="jumpBtn" class="controlBtn" onclick="jump()" style="display:none;">JUMP</button>
+
+<!-- FLAPPY -->
+<canvas id="flappyCanvas" width="400" height="400"></canvas>
+<br>
+<button id="flyBtn" class="controlBtn" onclick="fly()" style="display:none;">FLY</button>
+
+<!-- GUESS -->
+<div id="guessGame">
+  <h2>Guess the Number (1-50)</h2>
+  <input type="number" id="guessInput">
+  <button onclick="checkGuess()">Guess</button>
+  <p id="guessResult"></p>
+</div>
+
+<script>
+
+// -------- GAME SWITCH --------
+function showGame(game){
+  document.getElementById("dinoCanvas").style.display="none";
+  document.getElementById("flappyCanvas").style.display="none";
+  document.getElementById("guessGame").style.display="none";
+  document.getElementById("jumpBtn").style.display="none";
+  document.getElementById("flyBtn").style.display="none";
+
+  if(game==="dino"){
+    document.getElementById("dinoCanvas").style.display="block";
+    document.getElementById("jumpBtn").style.display="inline-block";
+  }
+  if(game==="guess"){
+    document.getElementById("guessGame").style.display="block";
+  }
+  if(game==="flappy"){
+    document.getElementById("flappyCanvas").style.display="block";
+    document.getElementById("flyBtn").style.display="inline-block";
+  }
+}
+
+// -------- GUESS GAME --------
+let randomNum=Math.floor(Math.random()*50)+1;
+
+function checkGuess(){
+  let guess=document.getElementById("guessInput").value;
+  let result=document.getElementById("guessResult");
+
+  if(guess==randomNum){
+    result.innerHTML="Correct! 🎉";
+    randomNum=Math.floor(Math.random()*50)+1;
+  }
+  else if(guess>randomNum){
+    result.innerHTML="Too High!";
+  }
+  else{
+    result.innerHTML="Too Low!";
+  }
+}
+
+// -------- DINO GAME --------
+let dinoCanvas=document.getElementById("dinoCanvas");
+let dctx=dinoCanvas.getContext("2d");
+
+let dinoY=150;
+let velocity=0;
+let gravity=1;
+let obstacleX=500;
+
+function jump(){
+  if(dinoY==150){
+    velocity=-15;
+  }
+}
+
+function dinoGame(){
+  dctx.clearRect(0,0,500,200);
+
+  velocity+=gravity;
+  dinoY+=velocity;
+  if(dinoY>150){
+    dinoY=150;
+    velocity=0;
+  }
+
+  dctx.fillStyle="white";
+  dctx.fillRect(50,dinoY,30,30);
+
+  obstacleX-=5;
+  if(obstacleX<0){
+    obstacleX=500;
+  }
+
+  dctx.fillRect(obstacleX,150,20,30);
+
+  if(obstacleX<80 && obstacleX>50 && dinoY>120){
+    alert("Dino Game Over!");
+    obstacleX=500;
+  }
+
+  requestAnimationFrame(dinoGame);
+}
+dinoGame();
+
+// -------- FLAPPY GAME --------
+let flappyCanvas=document.getElementById("flappyCanvas");
+let fctx=flappyCanvas.getContext("2d");
+
+let birdY=200;
+let birdVel=0;
+let pipeX=400;
+
+function fly(){
+  birdVel=-10;
+}
+
+function flappyGame(){
+  fctx.clearRect(0,0,400,400);
+
+  birdVel+=0.5;
+  birdY+=birdVel;
+
+  fctx.fillStyle="yellow";
+  fctx.fillRect(50,birdY,20,20);
+
+  pipeX-=3;
+  if(pipeX<-50){
+    pipeX=400;
+  }
+
+  fctx.fillStyle="green";
+  fctx.fillRect(pipeX,0,40,150);
+  fctx.fillRect(pipeX,250,40,150);
+
+  if((pipeX<70 && pipeX>40) && (birdY<150 || birdY>230)){
+    alert("Flappy Game Over!");
+    pipeX=400;
+  }
+
+  requestAnimationFrame(flappyGame);
+}
+flappyGame();
+
+</script>
+</body>
+  </html>
